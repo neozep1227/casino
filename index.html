@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Casino Game Logic Demo</title>
+  <title>Casino Royale</title>
   <script src="https://cdn.tailwindcss.com "></script>
   <style>
     body {
@@ -30,61 +30,158 @@
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-<div class="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-  <!-- Header -->
-  <header class="bg-black/70 backdrop-blur-md border-b border-yellow-500/30 shadow-lg sticky top-0 z-10">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-yellow-400">Casino Game Logic Demo</h1>
-    </div>
-  </header>
-
-  <!-- Balance -->
-  <div class="container mx-auto px-4 py-4 flex justify-end">
-    <div class="text-right">
-      <p class="text-sm text-gray-400">Balance</p>
-      <p id="balanceDisplay" class="text-2xl font-bold text-yellow-400">$500.00</p>
-    </div>
+<!-- Navigation -->
+<header class="bg-black/70 backdrop-blur-md border-b border-yellow-500/30 shadow-lg sticky top-0 z-10">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-yellow-400">Casino Royale</h1>
+    <nav class="space-x-4 hidden md:flex">
+      <button onclick="showSection('home')" class="hover:text-yellow-400 transition">Home</button>
+      <button onclick="showSection('games')" class="hover:text-yellow-400 transition">Games</button>
+      <button onclick="showSection('cashin')" class="hover:text-yellow-400 transition">Cash In</button>
+      <button onclick="showSection('account')" class="hover:text-yellow-400 transition">Account</button>
+    </nav>
   </div>
+</header>
 
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-8">
-    <section class="text-center">
-      <h2 class="text-3xl font-bold mb-6">🎰 Slots Game</h2>
-
-      <div id="slotMachine" class="flex justify-center mb-6">
-        <div class="slot">?</div>
-        <div class="slot">?</div>
-        <div class="slot">?</div>
-      </div>
-
-      <div class="flex items-center gap-4 justify-center mb-4">
-        <input type="number" id="slotsBet" placeholder="Bet amount" min="1" max="500"
-               class="w-32 px-3 py-2 bg-gray-700 border border-gray-600 rounded" value="10">
-        <button onclick="playSlots()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded font-semibold">
-          Spin
-        </button>
-      </div>
-
-      <p id="slotsResult" class="text-center text-lg mt-4"></p>
-      <p id="playerStats" class="text-sm text-gray-400 mt-2"></p>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-black/70 backdrop-blur-md border-t border-yellow-500/30 py-6 mt-12">
-    <div class="container mx-auto px-4 text-center text-sm text-gray-500">
-      Demo for Seminar - Game Logic & Player Engagement
-    </div>
-  </footer>
+<!-- Balance Display -->
+<div class="container mx-auto px-4 py-2 flex justify-end">
+  <div class="text-right">
+    <p class="text-sm text-gray-400">Balance</p>
+    <p id="balanceDisplay" class="text-2xl font-bold text-yellow-400">$500.00</p>
+  </div>
 </div>
 
+<!-- Main Content -->
+<main class="flex-grow container mx-auto px-4 py-8">
+  <!-- Sections -->
+  <section id="home" class="hidden">
+    <h2 class="text-4xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500 text-center">
+      Welcome to Casino Royale
+    </h2>
+    <p class="text-xl mb-8 max-w-2xl mx-auto text-center">
+      Play real-time games with virtual currency. Try your luck at Slots, Roulette, and more!
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-800/50 p-6 rounded-xl border border-yellow-500/20 hover:border-yellow-500/60 shadow-lg hover:shadow-yellow-500/20 transition">
+        <h3 class="text-xl font-bold mb-2">🎰 Slots</h3>
+        <p>Try your luck on our classic slot machines!</p>
+      </div>
+      <div class="bg-gray-800/50 p-6 rounded-xl border border-yellow-500/20 hover:border-yellow-500/60 shadow-lg hover:shadow-yellow-500/20 transition">
+        <h3 class="text-xl font-bold mb-2">🎲 Roulette</h3>
+        <p>Bet on red or black and spin the wheel!</p>
+      </div>
+      <div class="bg-gray-800/50 p-6 rounded-xl border border-yellow-500/20 hover:border-yellow-500/60 shadow-lg hover:shadow-yellow-500/20 transition">
+        <h3 class="text-xl font-bold mb-2">🃏 Blackjack</h3>
+        <p>Challenge the dealer and hit 21!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Games Section -->
+  <section id="games" class="hidden">
+    <h2 class="text-3xl font-bold mb-6">🎰 Slots Game</h2>
+
+    <div id="slotMachine" class="flex justify-center mb-6">
+      <div class="slot">?</div>
+      <div class="slot">?</div>
+      <div class="slot">?</div>
+    </div>
+
+    <div class="flex items-center gap-4 mb-4">
+      <input type="number" id="slotsBet" placeholder="Bet amount" min="1" max="500"
+             class="w-32 px-3 py-2 bg-gray-700 border border-gray-600 rounded" value="10">
+      <button onclick="playSlots()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded font-semibold">
+        Spin
+      </button>
+    </div>
+
+    <p id="slotsResult" class="text-center text-lg mt-4"></p>
+    <p id="playerStats" class="text-center text-sm text-gray-400 mt-2"></p>
+  </section>
+
+  <!-- Cash In Section -->
+  <section id="cashin" class="hidden">
+    <h2 class="text-3xl font-bold mb-6">💰 Cash In</h2>
+    <div class="bg-gray-800/70 p-6 rounded-xl border border-yellow-500/30 shadow-lg">
+      <p class="mb-4">Choose your payment method:</p>
+      <div class="space-y-4">
+        <label class="block">
+          <input type="radio" name="paymentMethod" value="paypal" checked class="mr-2">
+          PayPal
+        </label>
+        <label class="block">
+          <input type="radio" name="paymentMethod" value="gcash" class="mr-2">
+          GCash
+        </label>
+        <label class="block">
+          <input type="radio" name="paymentMethod" value="creditcard" class="mr-2">
+          Credit Card
+        </label>
+      </div>
+      <div class="mt-4">
+        <label class="block mb-2">Amount to Add ($)</label>
+        <input type="number" id="cashInAmount" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded" min="1" value="100">
+      </div>
+      <button onclick="processCashIn()" class="mt-4 bg-green-500 hover:bg-green-600 px-4 py-2 rounded font-semibold">
+        Add Funds
+      </button>
+    </div>
+  </section>
+
+  <!-- Account Section -->
+  <section id="account" class="hidden">
+    <h2 class="text-3xl font-bold mb-6">🔐 Account</h2>
+    <div class="bg-gray-800/70 p-6 rounded-xl border border-yellow-500/30 shadow-lg">
+      <div id="loginForm">
+        <h3 class="text-xl font-bold mb-4">Login</h3>
+        <div class="mb-4">
+          <label class="block mb-2">Username</label>
+          <input id="username" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded" />
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2">Password</label>
+          <input type="password" id="password" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded" />
+        </div>
+        <button onclick="login()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded font-semibold">
+          Login
+        </button>
+        <button onclick="showRegister()" class="ml-2 text-sm underline">Register</button>
+      </div>
+
+      <div id="registerForm" class="hidden">
+        <h3 class="text-xl font-bold mb-4">Register</h3>
+        <div class="mb-4">
+          <label class="block mb-2">Username</label>
+          <input id="newUsername" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded" />
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2">Password</label>
+          <input type="password" id="newPassword" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded" />
+        </div>
+        <button onclick="register()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded font-semibold">
+          Register
+        </button>
+        <button onclick="showLogin()" class="ml-2 text-sm underline">Back to Login</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-black/70 backdrop-blur-md border-t border-yellow-500/30 py-6 mt-12">
+  <div class="container mx-auto px-4 text-center text-sm text-gray-500">
+    Demo for Seminar - Game Logic & Player Engagement
+  </div>
+</footer>
+
 <script>
-  // Load from localStorage
   let balance = parseFloat(localStorage.getItem("balance")) || 500;
   let playerWins = parseInt(localStorage.getItem("playerWins")) || 0;
   let sessionCount = parseInt(localStorage.getItem("sessionCount")) || 0;
+  let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  let currentUser = localStorage.getItem("currentUser") || "";
 
   function updateBalance() {
     document.getElementById("balanceDisplay").textContent = `$${balance.toFixed(2)}`;
@@ -97,13 +194,9 @@
   }
 
   function getWinChance() {
-    if (playerWins < 5) {
-      return 0.5; // 🟢 50% chance to win for first 5 wins
-    } else if (playerWins < 10) {
-      return 0.3; // 🟠 30% chance for next 5 wins
-    } else {
-      return 0.02; // 🔴 2% chance after 10+ wins
-    }
+    if (playerWins < 5) return 0.5; // 🟢 First 5 wins
+    if (playerWins < 10) return 0.3; // 🟠 Next 5 wins
+    return 0.02; // 🔴 After 10+ wins
   }
 
   function playSlots() {
@@ -121,10 +214,8 @@
     const resultText = document.getElementById("slotsResult");
     const reelsDiv = document.querySelectorAll(".slot");
 
-    // Reset animation
     reelsDiv.forEach(r => r.style.animation = "spin 0.6s infinite");
 
-    // Calculate win chance
     const winChance = getWinChance();
     const win = Math.random() < winChance;
 
@@ -144,7 +235,6 @@
         resultText.textContent = `😢 You lost $${bet}`;
       }
 
-      // Update reel text
       reels.forEach((symbol, i) => {
         reelsDiv[i].textContent = symbol;
       });
@@ -155,10 +245,73 @@
     }, 1000);
   }
 
-  // Initial Setup
-  updateBalance();
-  updateStatsDisplay();
-</script>
+  function processCashIn() {
+    const amount = parseInt(document.getElementById("cashInAmount").value);
+    if (!amount || amount <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
 
+    balance += amount;
+    updateBalance();
+    alert(`✅ Successfully added $${amount} to your balance!`);
+  }
+
+  function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if (username && password) {
+      isLoggedIn = true;
+      currentUser = username;
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("currentUser", username);
+      showSection("games");
+    } else {
+      alert("Please enter both username and password.");
+    }
+  }
+
+  function register() {
+    const newUsername = document.getElementById("newUsername").value;
+    const newPassword = document.getElementById("newPassword").value;
+
+    if (newUsername && newPassword) {
+      isLoggedIn = true;
+      currentUser = newUsername;
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("currentUser", newUsername);
+      showSection("games");
+    } else {
+      alert("Please enter both username and password.");
+    }
+  }
+
+  function showRegister() {
+    document.getElementById("loginForm").classList.add("hidden");
+    document.getElementById("registerForm").classList.remove("hidden");
+  }
+
+  function showLogin() {
+    document.getElementById("loginForm").classList.remove("hidden");
+    document.getElementById("registerForm").classList.add("hidden");
+  }
+
+  function showSection(sectionId) {
+    document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
+    document.getElementById(sectionId).classList.remove("hidden");
+  }
+
+  // Show home by default
+  window.onload = () => {
+    updateBalance();
+    updateStatsDisplay();
+    if (!isLoggedIn) {
+      showSection("account");
+    } else {
+      showSection("home");
+    }
+  };
+</script>
 </body>
 </html>
