@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Casino Game Logic Demo</title>
+  <title>Casino Game Logic Demo - Seminar Edition</title>
   <script src="https://cdn.tailwindcss.com "></script>
   <style>
     body {
@@ -37,6 +37,7 @@
   <header class="bg-black/70 backdrop-blur-md border-b border-yellow-500/30 shadow-lg sticky top-0 z-10">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-yellow-400">Casino Game Logic Demo</h1>
+      <button onclick="toggleAdmin()" class="text-sm bg-yellow-500 text-black px-3 py-1 rounded">Toggle Admin Mode</button>
     </div>
   </header>
 
@@ -50,7 +51,17 @@
 
   <!-- Main Content -->
   <main class="container mx-auto px-4 py-8">
-    <section class="text-center">
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden mb-6">
+      <div class="bg-gray-800/70 p-4 rounded border border-yellow-500/30">
+        <h3 class="text-lg font-bold mb-2">📊 Admin Panel</h3>
+        <p id="adminStats"></p>
+      </div>
+    </div>
+
+    <!-- Slots Game -->
+    <section class="mb-12">
       <h2 class="text-3xl font-bold mb-6">🎰 Slots Game</h2>
 
       <div id="slotMachine" class="flex justify-center mb-6">
@@ -68,8 +79,39 @@
       </div>
 
       <p id="slotsResult" class="text-center text-lg mt-4"></p>
-      <p id="playerStats" class="text-sm text-gray-400 mt-2"></p>
+      <p id="slotsWinChance" class="text-center text-sm text-gray-400 mt-2"></p>
     </section>
+
+    <!-- Roulette Game -->
+    <section>
+      <h2 class="text-3xl font-bold mb-6">🎲 Roulette Game</h2>
+
+      <div class="bg-gray-800/70 p-6 rounded-xl border border-yellow-500/30 shadow-lg mb-6">
+        <div class="mb-4">
+          <label class="block mb-2">Bet on:</label>
+          <select id="rouletteBetType" class="bg-gray-700 px-3 py-2 rounded w-full">
+            <option value="red">Red</option>
+            <option value="black">Black</option>
+            <option value="number">Number (0-36)</option>
+          </select>
+          <input id="rouletteNumber" type="number" min="0" max="36" placeholder="Enter number" class="mt-2 bg-gray-700 px-3 py-2 rounded w-full hidden">
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+          <input type="number" id="rouletteBet" placeholder="Bet amount" min="1" max="500" class="w-32 px-3 py-2 bg-gray-700 border border-gray-600 rounded" value="10">
+          <button onclick="playRoulette()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded font-semibold">Spin</button>
+        </div>
+        <p id="rouletteResult" class="text-center"></p>
+        <p id="rouletteWinChance" class="text-center text-sm text-gray-400"></p>
+      </div>
+    </section>
+
+    <!-- Reset Button -->
+    <div class="text-center mt-8">
+      <button onclick="resetGame()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-sm">
+        🔁 Reset Game (For Demo)
+      </button>
+    </div>
+
   </main>
 
   <!-- Footer -->
@@ -79,6 +121,10 @@
     </div>
   </footer>
 </div>
+
+<!-- Audio -->
+<audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/coin_pickup.ogg "></audio>
+<audio id="lossSound" src="https://actions.google.com/sounds/v1/cartoon/whip_whoosh.ogg "></audio>
 
 <script>
   // Load from localStorage
@@ -91,16 +137,29 @@
     localStorage.setItem("balance", balance);
   }
 
-  function updateStatsDisplay() {
-    const stats = document.getElementById("playerStats");
-    stats.textContent = `Total Wins: ${playerWins} | Sessions: ${sessionCount}`;
+  function getWinChance() {
+    if (sessionCount <= 3) return 0.4;
+    if (playerWins >= 10) return 0.02;
+    if (playerWins >= 5) return 0.03;
+    return 0.05;
   }
 
-  function getWinChance() {
-    if (sessionCount <= 3) return 0.4; // 🟢 New player: 40%
-    if (playerWins >= 10) return 0.02; // 🔴 Frequent winner: 2%
-    if (playerWins >= 5) return 0.03; // 🟠 Moderate winner: 3%
-    return 0.05; // Default: 5%
+  function updateAdminPanel() {
+    const adminPanel = document.getElementById("adminPanel");
+    const adminStats = document.getElementById("adminStats");
+    if (adminPanel.classList.contains("hidden")) return;
+
+    adminStats.innerHTML = `
+      <strong>Session Count:</strong> ${sessionCount}<br>
+      <strong>Total Wins:</strong> ${playerWins}<br>
+      <strong>Current Win Chance:</strong> ${(getWinChance() * 100).toFixed(2)}%
+    `;
+  }
+
+  function toggleAdmin() {
+    const panel = document.getElementById("adminPanel");
+    panel.classList.toggle("hidden");
+    updateAdminPanel();
   }
 
   function playSlots() {
@@ -116,6 +175,7 @@
     const symbols = ['🍒', '🍋', '🍊', '🍇', '⭐'];
     const reels = [];
     const resultText = document.getElementById("slotsResult");
+    const winChanceText = document.getElementById("slotsWinChance");
     const reelsDiv = document.querySelectorAll(".slot");
 
     // Reset animation
@@ -133,12 +193,14 @@
         playerWins++;
         localStorage.setItem("playerWins", playerWins);
         resultText.textContent = `🎉 JACKPOT! You won $${bet * 10}`;
+        document.getElementById("winSound").play();
       } else {
         reels[0] = symbols[Math.floor(Math.random() * symbols.length)];
         reels[1] = symbols[Math.floor(Math.random() * symbols.length)];
         reels[2] = symbols[Math.floor(Math.random() * symbols.length)];
         balance -= bet;
         resultText.textContent = `😢 You lost $${bet}`;
+        document.getElementById("lossSound").play();
       }
 
       // Update reel text
@@ -148,13 +210,81 @@
 
       localStorage.setItem("balance", balance);
       updateBalance();
-      updateStatsDisplay();
+      winChanceText.textContent = `Current Win Chance: ${(winChance * 100).toFixed(2)}%`;
+      updateAdminPanel();
     }, 1000);
   }
 
+  function playRoulette() {
+    const betType = document.getElementById("rouletteBetType").value;
+    const betAmount = parseInt(document.getElementById("rouletteBet").value);
+    const chosenNumber = parseInt(document.getElementById("rouletteNumber").value);
+    const resultText = document.getElementById("rouletteResult");
+    const winChanceText = document.getElementById("rouletteWinChance");
+
+    if (isNaN(betAmount) || betAmount <= 0 || betAmount > balance) {
+      alert("Invalid bet amount");
+      return;
+    }
+
+    sessionCount++;
+    localStorage.setItem("sessionCount", sessionCount);
+
+    const winChance = getWinChance();
+    const winningNumber = Math.floor(Math.random() * 37);
+
+    let win = false;
+
+    if (betType === "red") {
+      win = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36].includes(winningNumber);
+    } else if (betType === "black") {
+      win = [2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35].includes(winningNumber);
+    } else if (betType === "number") {
+      win = winningNumber === chosenNumber;
+    }
+
+    if (win) {
+      balance += betAmount * (betType === "number" ? 35 : 2);
+      playerWins++;
+      localStorage.setItem("playerWins", playerWins);
+      resultText.textContent = `🎉 You won! The number was ${winningNumber}.`;
+      document.getElementById("winSound").play();
+    } else {
+      balance -= betAmount;
+      resultText.textContent = `😢 You lost. The number was ${winningNumber}.`;
+      document.getElementById("lossSound").play();
+    }
+
+    localStorage.setItem("balance", balance);
+    updateBalance();
+    winChanceText.textContent = `Current Win Chance: ${(winChance * 100).toFixed(2)}%`;
+    updateAdminPanel();
+  }
+
+  function resetGame() {
+    if (confirm("Reset all game data? This is for demo purposes only.")) {
+      localStorage.removeItem("balance");
+      localStorage.removeItem("playerWins");
+      localStorage.removeItem("sessionCount");
+      balance = 500;
+      playerWins = 0;
+      sessionCount = 0;
+      updateBalance();
+      updateAdminPanel();
+      document.getElementById("slotsResult").textContent = "";
+      document.getElementById("rouletteResult").textContent = "";
+    }
+  }
+
+  // Event listener for bet type change
+  document.getElementById("rouletteBetType").addEventListener("change", function () {
+    const input = document.getElementById("rouletteNumber");
+    input.classList.toggle("hidden", this.value !== "number");
+  });
+
   // Initial Setup
   updateBalance();
-  updateStatsDisplay();
+  updateAdminPanel();
 </script>
 
 </body>
